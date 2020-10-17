@@ -30,13 +30,14 @@ def fleiss_kappa(M):
     return kappa if kappa < 1. else 1.
 
 
-data_path = '../data/UserStudyLabeling'
+base_path = os.getcwd()
+data_path = os.path.join(base_path, '../data/UserStudyLabeling')
 datasets = ['BML', 'CMU', 'Human3.6M', 'ICT', 'RGB', 'SIG', 'UNC_RGB']
 raw_file = 'Responses/outputStep0.csv'
 num_emotions = 4
 responses_across_datasets = []
 responses_across_users_across_datasets = []
-fk_scores = np.zeros((len(datasets), num_emotions + 1))
+fk_scores = np.zeros((len(datasets), num_emotions * num_emotions - 1))
 
 for d_idx, dataset in enumerate(datasets):
     emotions = []
@@ -79,7 +80,17 @@ for d_idx, dataset in enumerate(datasets):
     fk_scores[d_idx, 1] = fleiss_kappa(responses_across_users[:, 1:2])
     fk_scores[d_idx, 2] = fleiss_kappa(responses_across_users[:, 2:3])
     fk_scores[d_idx, 3] = fleiss_kappa(responses_across_users[:, 3:])
-    fk_scores[d_idx, -1] = fleiss_kappa(responses_across_users[:, [0, 1, 3]])
+    fk_scores[d_idx, 4] = fleiss_kappa(responses_across_users[:, [0, 1]])
+    fk_scores[d_idx, 5] = fleiss_kappa(responses_across_users[:, [0, 2]])
+    fk_scores[d_idx, 6] = fleiss_kappa(responses_across_users[:, [0, 3]])
+    fk_scores[d_idx, 7] = fleiss_kappa(responses_across_users[:, [1, 2]])
+    fk_scores[d_idx, 8] = fleiss_kappa(responses_across_users[:, [1, 3]])
+    fk_scores[d_idx, 9] = fleiss_kappa(responses_across_users[:, [2, 3]])
+    fk_scores[d_idx, 10] = fleiss_kappa(responses_across_users[:, [0, 1, 2]])
+    fk_scores[d_idx, 11] = fleiss_kappa(responses_across_users[:, [0, 1, 3]])
+    fk_scores[d_idx, 12] = fleiss_kappa(responses_across_users[:, [0, 2, 3]])
+    fk_scores[d_idx, 13] = fleiss_kappa(responses_across_users[:, [1, 2, 3]])
+    fk_scores[d_idx, 14] = fleiss_kappa(responses_across_users)
     responses_across_datasets.append(responses)
     responses_across_users_across_datasets.append(responses_across_users)
 temp = 1
