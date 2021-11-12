@@ -3,8 +3,8 @@ import h5py
 import math
 import os
 import numpy as np
-import tensorflow as tf
-from sklearn.model_selection import train_test_split
+# import tensorflow as tf
+from sklearn.model_selection import train_test_split, KFold
 
 # torch
 import torch
@@ -13,7 +13,10 @@ from torchvision import datasets, transforms
 from utils import common
 
 
-def load_data(_path, _ftype, joints, coords, cycles=3, test_size=0.1):
+def load_data(_path, _ftype, joints, coords, cycles=3, num_folds=10, test_size=0.1):
+    """
+    test_size has no effect when n_folds is used
+    """
 
     file_affeature = os.path.join(_path, 'affectiveFeatures.h5')
     ffa = h5py.File(file_affeature, 'r')
@@ -51,8 +54,19 @@ def load_data(_path, _ftype, joints, coords, cycles=3, test_size=0.1):
     # gait = common.get_affective_features(np.reshape(gait, (gait.shape[0], gait.shape[1], joints, coords)))[:, :, :48]
 
     data = [(a, g) for a, g in zip(aff, gait)]
-    data_train, data_test, labels_train, labels_test = train_test_split(data, labels, test_size=test_size)
+    data_train = [None] * num_folds
+    labels_train = [None] * num_folds
+    data_test = [None] * num_folds
+    labels_test = [None] * num_folds
+    kf = KFold(n_splits=num_folds, shuffle=True)
+    for idx, (train_indices, test_indices) in enumerate(kf.split(data)):
+        data_train[idx] = [data[tr] for tr in train_indices]
+        labels_train[idx] = [labels[tr] for tr in train_indices]
+        data_test[idx] = [data[ts] for ts in test_indices]
+        labels_test[idx] = [labels[ts] for ts in test_indices]
     return data, labels, data_train, labels_train, data_test, labels_test
+    # data_train, data_test, labels_train, labels_test = train_test_split(data, labels, test_size=test_size)
+    # return data, labels, data_train, labels_train, data_test, labels_test
 
 
 def scale(_data):

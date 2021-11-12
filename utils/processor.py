@@ -1,3 +1,4 @@
+import glob
 import h5py
 import math
 import os
@@ -35,15 +36,14 @@ def find_all_substr(a_str, sub):
 
 
 def get_best_epoch_and_accuracy(path_to_model_files):
-    all_models = os.listdir(path_to_model_files)
+    all_models = [name.split('/')[-1] for name in glob.glob(os.path.join(path_to_model_files, '*_model.pth.tar'))]
+    if len(all_models) == 0:
+        return None, 0.
     acc_list = np.zeros(len(all_models))
     for i, model in enumerate(all_models):
-        acc = str.split(model, '_')
-        if len(acc) > 1:
-            acc_list[i] = float(acc[1][3:])
-    best_model = all_models[np.argmax(acc_list)]
-    all_us = list(find_all_substr(best_model, '_'))
-    return int(best_model[5:all_us[0]]), float(best_model[all_us[0]+4:all_us[1]])
+        acc_list[i] = float(model.split(model, '_')[1])
+    best_model = all_models[np.argmax(acc_list)].split('_')
+    return int(best_model[1]), float(best_model[3])
 
 
 class Processor(object):
@@ -231,7 +231,7 @@ class Processor(object):
             if self.accuracy_updated:
                 torch.save(self.model.state_dict(),
                            os.path.join(self.args.work_dir,
-                                        'epoch{}_acc{:.2f}_model.pth.tar'.format(epoch, self.best_accuracy.item())))
+                                        'epoch_{}_acc_{:.2f}_model.pth.tar'.format(epoch, self.best_accuracy.item())))
 
     def test(self):
 
@@ -258,9 +258,10 @@ class Processor(object):
             self.best_epoch, best_accuracy = get_best_epoch_and_accuracy(self.args.work_dir)
         else:
             best_accuracy = self.best_accuracy.item()
-        filename = os.path.join(self.args.work_dir,
-                                'epoch{}_acc{:.2f}_model.pth.tar'.format(self.best_epoch, best_accuracy))
-        self.model.load_state_dict(torch.load(filename))
+        if self.best_epoch is not None:
+            filename = os.path.join(self.args.work_dir,
+                                    'epoch_{}_acc_{:.2f}_model.pth.tar'.format(self.best_epoch, best_accuracy))
+            self.model.load_state_dict(torch.load(filename))
         label_preds = np.empty(len(data))
         features = np.empty((0, 4))
 
