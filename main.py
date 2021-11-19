@@ -1,11 +1,12 @@
 import argparse
 import os
 import numpy as np
-from utils import loader, processor, common
-
 import torch
+
+from sklearn.metrics import precision_recall_fscore_support
 from torchlight.torchlight.gpu import ngpu
 
+from utils import loader, processor, common
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(base_path, '../data')
@@ -57,40 +58,72 @@ parser.add_argument('--save-log', action='store_true', default=True,
 args = parser.parse_args()
 device = 'cuda:0'
 
+datasets = ['BML', 'CMU', 'Human3.6M', 'ICT', 'SIG', 'UNC_RGB']
+
 data, labels, data_train_all_folds, labels_train_all_folds,\
     data_test_all_folds, labels_test_all_folds = \
         loader.load_data(data_path, ftype, joints, coords, cycles=cycles, num_folds=num_folds)
-for init_idx in range(num_inits):
-    for fold_idx, (data_train, labels_train, data_test, labels_test) in enumerate(zip(data_train_all_folds, labels_train_all_folds,
-                                                                                    data_test_all_folds, labels_test_all_folds)):
-        print('Running init {:02d}, fold {:02d}'.format(init_idx, fold_idx))
-        # saving trained models for each init and split in separate folders
-        model_path = os.path.join(base_path, 'model_classifier_combined_lstm_init_{:02d}_fold_{:02d}/features'.format(init_idx, fold_idx) + ftype)
-        args.work_dir = model_path
-        os.makedirs(model_path, exist_ok=True)
-        aff_features = len(data_train[0][0])
-        num_classes = np.unique(labels_train).shape[0]
-        data_loader = list()
-        data_loader.append(torch.utils.data.DataLoader(
-            dataset=loader.TrainTestLoader(data_train, labels_train, joints, coords),
-            batch_size=args.batch_size,
-            shuffle=True,
-            num_workers=args.num_worker * ngpu(device),
-            drop_last=True))
-        data_loader.append(torch.utils.data.DataLoader(
-            dataset=loader.TrainTestLoader(data_test, labels_test, joints, coords),
-            batch_size=args.batch_size,
-            shuffle=True,
-            num_workers=args.num_worker * ngpu(device),
-            drop_last=True))
-        data_loader = dict(train=data_loader[0], test=data_loader[1])
-        graph_dict = {'strategy': 'spatial'}
-        pr = processor.Processor(args, data_loader, coords*joints, aff_features, num_classes, graph_dict, device=device)
-        if args.train:
-            pr.train()
 
-        best_features, label_preds = pr.extract_best_feature(data, joints, coords)
-        # print('{:.4f}'.format(sum(labels == label_preds)/labels.shape[0]))
-        # common.plot_features(best_features, labels)
+metrics_file_full_path = 'metrics.txt'
+if not os.path.exists(metrics_file_full_path):
+    for init_idx in range(num_inits):
+        for fold_idx, (data_train, labels_train, data_test, labels_test) in enumerate(zip(data_train_all_folds, labels_train_all_folds,
+                                                                                        data_test_all_folds, labels_test_all_folds)):
+            print('Running init {:02d}, fold {:02d}'.format(init_idx, fold_idx))
+            # saving trained models for each init and split in separate folders
+            model_path = os.path.join(base_path, 'model_classifier_combined_lstm_init_{:02d}_fold_{:02d}/features'.format(init_idx, fold_idx) + ftype)
+            args.work_dir = model_path
+            os.makedirs(model_path, exist_ok=True)
+            aff_features = len(data_train[0][0])
+            num_classes = np.unique(labels_train).shape[0]
+            data_loader = list()
+            data_loader.append(torch.utils.data.DataLoader(
+                dataset=loader.TrainTestLoader(data_train, labels_train, joints, coords),
+                batch_size=args.batch_size,
+                shuffle=True,
+                num_workers=args.num_worker * ngpu(device),
+                drop_last=True))
+            data_loader.append(torch.utils.data.DataLoader(
+                dataset=loader.TrainTestLoader(data_test, labels_test, joints, coords),
+                batch_size=args.batch_size,
+                shuffle=True,
+                num_workers=args.num_worker * ngpu(device),
+                drop_last=True))
+            data_loader = dict(train=data_loader[0], test=data_loader[1])
+            graph_dict = {'strategy': 'spatial'}
+            pr = processor.Processor(args, data_loader, coords*joints, aff_features, num_classes, graph_dict, device=device)
+            if args.train:
+                pr.train()
 
-        # TO DO: calculate and save precision, recall, and accuracy for each init and fold
+            best_features, label_preds = pr.extract_best_feature(data_test, joints, coords)
+            # print('{:.4f}'.format(sum(labels == label_preds)/labels.shape[0]))
+            # common.plot_features(best_features, labels)
+
+            precision, recall, fscore, _ = precision_recall_fscore_support(labels_test, label_preds, average='weighted')
+            accuracy = sum(labels_test == label_preds) / np.shape(labels_test)[0]
+            # accuracy = '{:.4f}'.format(sum(labels_test == label_preds)/np.shape(labels_test)[0])
+            print(precision, recall, fscore, accuracy)
+            metrics_file_full_path.write('Running init {:02d}, fold {:02d} ... \n'.format(init_idx, fold_idx))
+            # metrics_file_full_path.write('Running init {:02d}, dataset {} ... \n'.format(init_idx, datasets[dataset_idx]))
+            metrics_file_full_path.write('precision= {:.4f}, recall= {:.4f}, f-score= {:.4f}, accuracy= {:.4f} \n\n'.format(precision, recall, fscore, accuracy))
+            # print('{:.4f}'.format(sum(labels == label_preds)/labels.shape[0]))
+            # common.plot_features(best_features, labels)
+
+    metrics_file_full_path.close()
+
+with open(metrics_file_full_path, 'r') as mf:
+    all_lines = mf.readlines()
+
+metrics = np.zeros((num_inits, len(data_train_all_folds), 4))
+for line in all_lines:
+    splits = line.split(' ')
+    if 'init' in line and 'fold' in line:
+        init = int(splits[2].split(',')[0])
+        fold = int(splits[4])
+    elif 'precision' in line and 'recall' in line and 'f-score' in line and 'accuracy' in line:
+        metrics[init, fold, 0] = float(splits[1].split(',')[0])
+        metrics[init, fold, 1] = float(splits[3].split(',')[0])
+        metrics[init, fold, 2] = float(splits[5].split(',')[0])
+        metrics[init, fold, 3] = float(splits[7])
+
+stop = 1
