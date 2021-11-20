@@ -35,14 +35,20 @@ data_path = os.path.join(base_path, '../data/UserStudyLabeling')
 datasets = ['BML', 'CMU', 'Human3.6M', 'ICT', 'RGB', 'SIG', 'UNC_RGB']
 raw_file = 'Responses/outputStep0.csv'
 num_emotions = 4
+num_choices = 5
 responses_across_datasets = []
 responses_across_users_across_datasets = []
 fk_scores = np.zeros((len(datasets), num_emotions * num_emotions - 1))
+angry_idx = np.arange(0, 5)
+happy_idx = np.arange(5, 10)
+neutral_idx = np.arange(10, 15)
+sad_idx = np.arange(15, 20)
 
 for d_idx, dataset in enumerate(datasets):
     emotions = []
     responses = []
-    with open(os.path.join(os.path.join(data_path, dataset), raw_file)) as df:
+    user_names = []
+    with open(os.path.join(data_path, dataset, raw_file)) as df:
         data = csv.reader(df)
         for r_idx, row in enumerate(data):
             if r_idx == 0:
@@ -52,45 +58,58 @@ for d_idx, dataset in enumerate(datasets):
                     emotions.append(entry.split(' ')[-1])
             else:
                 num_qs = int(len(emotions) / num_emotions)
-                responses_per_user = np.zeros((num_qs, num_emotions))
+                responses_per_user = np.zeros((num_qs, num_emotions, num_choices))
+                user_names.append(row[0])
                 for e_idx, entry in enumerate(row[1:-1] if len(row) % 4 == 2 else row[1:]):
                     response_idx = int(np.floor(e_idx / 4))
                     if len(entry) > 0:
                         if emotions[e_idx] == 'Angry':
-                            responses_per_user[response_idx, 0] = float(entry)
+                            responses_per_user[response_idx, 0, int(entry) - 1] += 1
                         elif emotions[e_idx] == 'Happy':
-                            responses_per_user[response_idx, 1] = float(entry)
+                            responses_per_user[response_idx, 1, int(entry) - 1] += 1
                         if emotions[e_idx] == 'Neutral':
-                            responses_per_user[response_idx, 2] = float(entry)
+                            responses_per_user[response_idx, 2, int(entry) - 1] += 1
                         if emotions[e_idx] == 'Sad':
-                            responses_per_user[response_idx, 3] = float(entry)
-                    if e_idx % 4 == 3 and np.max(responses_per_user[response_idx]) > 0:
-                        if np.sum(responses_per_user[response_idx] == responses_per_user[response_idx].max()) > 1:
-                            responses_per_user[response_idx] = 0.
-                            responses_per_user[response_idx, 2] = 1.
-                        else:
-                            max_idx = np.argmax(responses_per_user[response_idx])
-                            responses_per_user[response_idx] = 0.
-                            responses_per_user[response_idx, max_idx] = 1.
+                            responses_per_user[response_idx, 3, int(entry) - 1] += 1
+                    # if len(entry) > 0:
+                    #     if emotions[e_idx] == 'Angry':
+                    #         responses_per_user[response_idx, 0] = float(entry)
+                    #     elif emotions[e_idx] == 'Happy':
+                    #         responses_per_user[response_idx, 1] = float(entry)
+                    #     if emotions[e_idx] == 'Neutral':
+                    #         responses_per_user[response_idx, 2] = float(entry)
+                    #     if emotions[e_idx] == 'Sad':
+                    #         responses_per_user[response_idx, 3] = float(entry)
+                    # if e_idx % 4 == 3 and np.max(responses_per_user[response_idx]) > 0:
+                    #     # max_idx = np.argwhere(responses_per_user[response_idx] == responses_per_user[response_idx].max())
+                    #     # responses_per_user[response_idx] = 0.
+                    #     # responses_per_user[response_idx, max_idx] = 1.
+                    #     if np.sum(responses_per_user[response_idx] == responses_per_user[response_idx].max()) > 1:
+                    #         responses_per_user[response_idx] = 0.
+                    #         responses_per_user[response_idx, 2] = 1.
+                    #     else:
+                    #         max_idx = np.argmax(responses_per_user[response_idx])
+                    #         responses_per_user[response_idx] = 0.
+                    #         responses_per_user[response_idx, max_idx] = 1.
 
                 responses.append(responses_per_user)
-    responses = np.stack(responses)
+    responses = np.reshape(np.stack(responses), (len(responses), len(responses[0]), -1))
     responses_across_users = np.sum(responses, axis=0)
-    fk_scores[d_idx, 0] = fleiss_kappa(responses_across_users[:, 0:1])
-    fk_scores[d_idx, 1] = fleiss_kappa(responses_across_users[:, 1:2])
-    fk_scores[d_idx, 2] = fleiss_kappa(responses_across_users[:, 2:3])
-    fk_scores[d_idx, 3] = fleiss_kappa(responses_across_users[:, 3:])
-    fk_scores[d_idx, 4] = fleiss_kappa(responses_across_users[:, [0, 1]])
-    fk_scores[d_idx, 5] = fleiss_kappa(responses_across_users[:, [0, 2]])
-    fk_scores[d_idx, 6] = fleiss_kappa(responses_across_users[:, [0, 3]])
-    fk_scores[d_idx, 7] = fleiss_kappa(responses_across_users[:, [1, 2]])
-    fk_scores[d_idx, 8] = fleiss_kappa(responses_across_users[:, [1, 3]])
-    fk_scores[d_idx, 9] = fleiss_kappa(responses_across_users[:, [2, 3]])
-    fk_scores[d_idx, 10] = fleiss_kappa(responses_across_users[:, [0, 1, 2]])
-    fk_scores[d_idx, 11] = fleiss_kappa(responses_across_users[:, [0, 1, 3]])
-    fk_scores[d_idx, 12] = fleiss_kappa(responses_across_users[:, [0, 2, 3]])
-    fk_scores[d_idx, 13] = fleiss_kappa(responses_across_users[:, [1, 2, 3]])
+    fk_scores[d_idx, 0] = fleiss_kappa(responses_across_users[:, angry_idx])
+    fk_scores[d_idx, 1] = fleiss_kappa(responses_across_users[:, happy_idx])
+    fk_scores[d_idx, 2] = fleiss_kappa(responses_across_users[:, neutral_idx])
+    fk_scores[d_idx, 3] = fleiss_kappa(responses_across_users[:, sad_idx])
+    fk_scores[d_idx, 4] = fleiss_kappa(responses_across_users[:, np.concatenate((angry_idx, happy_idx))])
+    fk_scores[d_idx, 5] = fleiss_kappa(responses_across_users[:, np.concatenate((angry_idx, neutral_idx))])
+    fk_scores[d_idx, 6] = fleiss_kappa(responses_across_users[:, np.concatenate((angry_idx, sad_idx))])
+    fk_scores[d_idx, 7] = fleiss_kappa(responses_across_users[:, np.concatenate((happy_idx, neutral_idx))])
+    fk_scores[d_idx, 8] = fleiss_kappa(responses_across_users[:, np.concatenate((happy_idx, sad_idx))])
+    fk_scores[d_idx, 9] = fleiss_kappa(responses_across_users[:, np.concatenate((neutral_idx, sad_idx))])
+    fk_scores[d_idx, 10] = fleiss_kappa(responses_across_users[:, np.concatenate((angry_idx, happy_idx, neutral_idx))])
+    fk_scores[d_idx, 11] = fleiss_kappa(responses_across_users[:, np.concatenate((angry_idx, happy_idx, sad_idx))])
+    fk_scores[d_idx, 12] = fleiss_kappa(responses_across_users[:, np.concatenate((angry_idx, neutral_idx, sad_idx))])
+    fk_scores[d_idx, 13] = fleiss_kappa(responses_across_users[:, np.concatenate((happy_idx, neutral_idx, sad_idx))])
     fk_scores[d_idx, 14] = fleiss_kappa(responses_across_users)
     responses_across_datasets.append(responses)
     responses_across_users_across_datasets.append(responses_across_users)
-temp = 1
+    print('{}:\t\t{}'.format(datasets[d_idx], fk_scores[d_idx, 11]))

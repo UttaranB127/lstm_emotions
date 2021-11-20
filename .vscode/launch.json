@@ -10,6 +10,13 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "inter_rater_agreement",
+            "type": "python",
+            "request": "launch",
+            "program": "inter_rater_agreement.py",
+            "console": "integratedTerminal"
         }
     ]
 }
