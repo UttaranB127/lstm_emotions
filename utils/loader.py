@@ -75,7 +75,7 @@ def load_data(_path, _ftype, joints, coords, processed_data_path=None, cycles=3,
         data_test[idx] = [data[ts] for ts in test_indices]
         labels_test[idx] = [labels[ts] for ts in test_indices]
     if processed_data_path is not None:
-        with open(processed_data_file, 'w') as pdf:
+        with open(processed_data_file, 'wb') as pdf:
             pkl_data = pickle.dump({'data': data,
                                     'labels': labels,
                                     'data_train': data_train,
