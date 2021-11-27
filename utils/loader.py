@@ -3,6 +3,7 @@ import h5py
 import math
 import os
 import numpy as np
+import pickle
 # import tensorflow as tf
 from sklearn.model_selection import train_test_split, KFold
 
@@ -13,11 +14,20 @@ from torchvision import datasets, transforms
 from utils import common
 
 
-def load_data(_path, _ftype, joints, coords, cycles=3, num_folds=10, test_size=0.1):
+def load_data(_path, _ftype, joints, coords, processed_data_path=None, cycles=3, num_folds=10, test_size=0.1):
     """
     test_size has no effect when n_folds is used
     """
 
+    if processed_data_path is not None:
+        processed_data_file = os.path.join(processed_data_path, 'data_processed.pkl')
+
+    if os.path.exists(processed_data_file):
+        with open(processed_data_file, 'rb') as pdf:
+            pkl_data = pickle.load(pdf)
+        return pkl_data['data'], pkl_data['labels'], pkl_data['data_train'], pkl_data['labels_train'],\
+            pkl_data['data_test'], pkl_data['labels_test']
+    
     file_affeature = os.path.join(_path, 'affectiveFeatures.h5')
     ffa = h5py.File(file_affeature, 'r')
 
@@ -64,6 +74,15 @@ def load_data(_path, _ftype, joints, coords, cycles=3, num_folds=10, test_size=0
         labels_train[idx] = [labels[tr] for tr in train_indices]
         data_test[idx] = [data[ts] for ts in test_indices]
         labels_test[idx] = [labels[ts] for ts in test_indices]
+    if processed_data_path is not None:
+        with open(processed_data_file, 'w') as pdf:
+            pkl_data = pickle.dump({'data': data,
+                                    'labels': labels,
+                                    'data_train': data_train,
+                                    'labels_train': labels_train,
+                                    'data_test': data_test,
+                                    'labels_test': labels_test
+                                   }, pdf, protocol=pickle.HIGHEST_PROTOCOL)
     return data, labels, data_train, labels_train, data_test, labels_test
     # data_train, data_test, labels_train, labels_test = train_test_split(data, labels, test_size=test_size)
     # return data, labels, data_train, labels_train, data_test, labels_test
