@@ -41,7 +41,7 @@ def get_best_epoch_and_accuracy(path_to_model_files):
         return None, 0.
     acc_list = np.zeros(len(all_models))
     for i, model in enumerate(all_models):
-        acc_list[i] = float(model.split(model, '_')[1])
+        acc_list[i] = float(model.split('_')[3])
     best_model = all_models[np.argmax(acc_list)].split('_')
     return int(best_model[1]), float(best_model[3])
 

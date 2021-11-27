@@ -1,0 +1,243 @@
+Running init 00, dataset 00
+precision= 0.2242, recall= 0.2417, f-score= 0.2044, accuracy= 0.2417 
+
+
+Running init 00, dataset 01
+precision= 0.3265, recall= 0.5714, f-score= 0.4156, accuracy= 0.5714 
+
+
+Running init 00, dataset 02
+precision= 0.3333, recall= 0.5000, f-score= 0.3878, accuracy= 0.5000 
+
+
+Running init 00, dataset 03
+precision= 0.2934, recall= 0.5417, f-score= 0.3806, accuracy= 0.5417 
+
+
+Running init 00, dataset 04
+precision= 0.1135, recall= 0.1951, f-score= 0.1408, accuracy= 0.1951 
+
+
+Running init 00, dataset 05
+precision= 0.0006, recall= 0.0238, f-score= 0.0011, accuracy= 0.0238 
+
+
+Running init 01, dataset 00
+precision= 0.0367, recall= 0.1917, f-score= 0.0617, accuracy= 0.1917 
+
+
+Running init 01, dataset 01
+precision= 0.3265, recall= 0.5714, f-score= 0.4156, accuracy= 0.5714 
+
+
+Running init 01, dataset 02
+precision= 0.0000, recall= 0.0000, f-score= 0.0000, accuracy= 0.0000 
+
+
+Running init 01, dataset 03
+precision= 0.0590, recall= 0.1667, f-score= 0.0854, accuracy= 0.1667 
+
+
+Running init 01, dataset 04
+precision= 0.0482, recall= 0.2195, f-score= 0.0790, accuracy= 0.2195 
+
+
+Running init 01, dataset 05
+precision= 0.0886, recall= 0.2976, f-score= 0.1365, accuracy= 0.2976 
+
+
+Running init 02, dataset 00
+precision= 0.0367, recall= 0.1917, f-score= 0.0617, accuracy= 0.1917 
+
+
+Running init 02, dataset 01
+precision= 0.0504, recall= 0.2245, f-score= 0.0823, accuracy= 0.2245 
+
+
+Running init 02, dataset 02
+precision= 0.0000, recall= 0.0000, f-score= 0.0000, accuracy= 0.0000 
+
+
+Running init 02, dataset 03
+precision= 0.2746, recall= 0.0833, f-score= 0.0792, accuracy= 0.0833 
+
+
+Running init 02, dataset 04
+precision= 0.0857, recall= 0.2927, f-score= 0.1325, accuracy= 0.2927 
+
+
+Running init 02, dataset 05
+precision= 0.0886, recall= 0.2976, f-score= 0.1365, accuracy= 0.2976 
+
+
+Running init 03, dataset 00
+precision= 0.0575, recall= 0.1583, f-score= 0.0775, accuracy= 0.1583 
+
+
+Running init 03, dataset 01
+precision= 0.1098, recall= 0.1633, f-score= 0.0922, accuracy= 0.1633 
+
+
+Running init 03, dataset 02
+precision= 0.1837, recall= 0.4286, f-score= 0.2571, accuracy= 0.4286 
+
+
+Running init 03, dataset 03
+precision= 0.0453, recall= 0.2083, f-score= 0.0744, accuracy= 0.2083 
+
+
+Running init 03, dataset 04
+precision= 0.1333, recall= 0.2927, f-score= 0.1655, accuracy= 0.2927 
+
+
+Running init 03, dataset 05
+precision= 0.0886, recall= 0.2976, f-score= 0.1365, accuracy= 0.2976 
+
+
+Running init 04, dataset 00
+precision= 0.0201, recall= 0.1417, f-score= 0.0352, accuracy= 0.1417 
+
+
+Running init 04, dataset 01
+precision= 0.0150, recall= 0.1224, f-score= 0.0267, accuracy= 0.1224 
+
+
+Running init 04, dataset 02
+precision= 0.0000, recall= 0.0000, f-score= 0.0000, accuracy= 0.0000 
+
+
+Running init 04, dataset 03
+precision= 0.0278, recall= 0.1667, f-score= 0.0476, accuracy= 0.1667 
+
+
+Running init 04, dataset 04
+precision= 0.0857, recall= 0.2927, f-score= 0.1325, accuracy= 0.2927 
+
+
+Running init 04, dataset 05
+precision= 0.1276, recall= 0.3333, f-score= 0.1845, accuracy= 0.3333 
+
+
+Running init 05, dataset 00
+precision= 0.2415, recall= 0.3000, f-score= 0.2594, accuracy= 0.3000 
+
+
+Running init 05, dataset 01
+precision= 0.0150, recall= 0.1224, f-score= 0.0267, accuracy= 0.1224 
+
+
+Running init 05, dataset 02
+precision= 0.2500, recall= 0.5000, f-score= 0.3333, accuracy= 0.5000 
+
+
+Running init 05, dataset 03
+precision= 0.2934, recall= 0.5417, f-score= 0.3806, accuracy= 0.5417 
+
+
+Running init 05, dataset 04
+precision= 0.0482, recall= 0.2195, f-score= 0.0790, accuracy= 0.2195 
+
+
+Running init 05, dataset 05
+precision= 0.2503, recall= 0.3571, f-score= 0.2926, accuracy= 0.3571 
+
+
+Running init 06, dataset 00
+precision= 0.0661, recall= 0.1833, f-score= 0.0927, accuracy= 0.1833 
+
+
+Running init 06, dataset 01
+precision= 0.0150, recall= 0.1224, f-score= 0.0267, accuracy= 0.1224 
+
+
+Running init 06, dataset 02
+precision= 0.1837, recall= 0.4286, f-score= 0.2571, accuracy= 0.4286 
+
+
+Running init 06, dataset 03
+precision= 0.0367, recall= 0.1250, f-score= 0.0556, accuracy= 0.1250 
+
+
+Running init 06, dataset 04
+precision= 0.1166, recall= 0.3415, f-score= 0.1738, accuracy= 0.3415 
+
+
+Running init 06, dataset 05
+precision= 0.0871, recall= 0.2857, f-score= 0.1335, accuracy= 0.2857 
+
+
+Running init 07, dataset 00
+precision= 0.0367, recall= 0.1917, f-score= 0.0617, accuracy= 0.1917 
+
+
+Running init 07, dataset 01
+precision= 0.5867, recall= 0.1429, f-score= 0.0666, accuracy= 0.1429 
+
+
+Running init 07, dataset 02
+precision= 0.2500, recall= 0.5000, f-score= 0.3333, accuracy= 0.5000 
+
+
+Running init 07, dataset 03
+precision= 0.5489, recall= 0.1250, f-score= 0.0907, accuracy= 0.1250 
+
+
+Running init 07, dataset 04
+precision= 0.3146, recall= 0.1707, f-score= 0.0832, accuracy= 0.1707 
+
+
+Running init 07, dataset 05
+precision= 0.0907, recall= 0.2976, f-score= 0.1391, accuracy= 0.2976 
+
+
+Running init 08, dataset 00
+precision= 0.0376, recall= 0.1833, f-score= 0.0625, accuracy= 0.1833 
+
+
+Running init 08, dataset 01
+precision= 0.0156, recall= 0.1224, f-score= 0.0277, accuracy= 0.1224 
+
+
+Running init 08, dataset 02
+precision= 0.4286, recall= 0.1429, f-score= 0.2143, accuracy= 0.1429 
+
+
+Running init 08, dataset 03
+precision= 0.0290, recall= 0.1667, f-score= 0.0494, accuracy= 0.1667 
+
+
+Running init 08, dataset 04
+precision= 0.3421, recall= 0.2439, f-score= 0.1257, accuracy= 0.2439 
+
+
+Running init 08, dataset 05
+precision= 0.0862, recall= 0.2619, f-score= 0.1297, accuracy= 0.2619 
+
+
+Running init 09, dataset 00
+precision= 0.2515, recall= 0.4667, f-score= 0.3131, accuracy= 0.4667 
+
+
+Running init 09, dataset 01
+precision= 0.0067, recall= 0.0816, f-score= 0.0123, accuracy= 0.0816 
+
+
+Running init 09, dataset 02
+precision= 0.1837, recall= 0.4286, f-score= 0.2571, accuracy= 0.4286 
+
+
+Running init 09, dataset 03
+precision= 0.0393, recall= 0.1250, f-score= 0.0580, accuracy= 0.1250 
+
+
+Running init 09, dataset 04
+precision= 0.1177, recall= 0.2439, f-score= 0.1588, accuracy= 0.2439 
+
+
+Running init 09, dataset 05
+precision= 0.1362, recall= 0.3690, f-score= 0.1990, accuracy= 0.3690 
+
+
+
+Process finished with exit code 0
+

@@ -17,9 +17,9 @@ cycles = 1
 num_inits = 10
 num_folds = 10
 
-parser = argparse.ArgumentParser(description='Gait Gen')
-parser.add_argument('--train', type=bool, default=True, metavar='T',
-                    help='train the model (default: True)')
+parser = argparse.ArgumentParser(description='Gait Emotion Recognition using LSTM')
+parser.add_argument('--train', action='store_true', default=False,
+                    help='train the model')
 parser.add_argument('--batch-size', type=int, default=8, metavar='B',
                     help='input batch size for training (default: 8)')
 parser.add_argument('--num-worker', type=int, default=4, metavar='W',
