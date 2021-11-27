@@ -10,6 +10,8 @@ from utils import loader, processor, common
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(base_path, '../data')
+processed_data_path = os.path.join(base_path, '../data', 'processed')
+os.makedirs(processed_data_path, exist_ok=True)
 ftype = ''
 coords = 3
 joints = 16
@@ -62,7 +64,7 @@ datasets = ['BML', 'CMU', 'Human3.6M', 'ICT', 'SIG', 'UNC_RGB']
 
 data, labels, data_train_all_folds, labels_train_all_folds,\
     data_test_all_folds, labels_test_all_folds = \
-        loader.load_data(data_path, ftype, joints, coords, cycles=cycles, num_folds=num_folds)
+        loader.load_data(data_path, ftype, joints, coords, processed_data_path, cycles=cycles, num_folds=num_folds)
 
 metrics_file_full_path = 'metrics.txt'
 if not os.path.exists(metrics_file_full_path):
